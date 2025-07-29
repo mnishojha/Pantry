@@ -11,7 +11,7 @@ import SwiftUI
 struct PantryApp: App {
     var body: some Scene {
         WindowGroup {
-            MainTabView()
+            MainOnboardingView()
         }
     }
 }

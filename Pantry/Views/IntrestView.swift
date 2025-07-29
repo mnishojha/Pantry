@@ -5,7 +5,16 @@
 //  Created by manish ojha on 29/07/25.
 //
 
+
 import SwiftUI
+import SwiftUI
+
+struct Interest: Identifiable {
+    let id = UUID()
+    let name: String
+    let icon: String
+    var isSelected: Bool
+}
 
 struct ChallengelyInterestsView: View {
     @State private var interests = [
@@ -15,175 +24,79 @@ struct ChallengelyInterestsView: View {
         Interest(name: "Learning", icon: "book.fill", isSelected: false),
         Interest(name: "Social", icon: "person.2.fill", isSelected: false)
     ]
-    
-    let onContinue: () -> Void  // Navigation closure
-    
+
+    let onContinue: () -> Void
+
     var selectedCount: Int {
         interests.filter { $0.isSelected }.count
     }
-    
+
     var canContinue: Bool {
         selectedCount >= 3
     }
-    
+
     var body: some View {
-        VStack(spacing: 0) {
-            // Header
-            VStack(spacing: 20) {
-                HStack {
-                    Button(action: {
-                        // Handle back action if needed
-                    }) {
-                        Image(systemName: "arrow.left")
-                            .font(.system(size: 20, weight: .medium))
-                            .foregroundColor(.black)
-                    }
-                    Spacer()
-                }
-                .padding(.horizontal, 24)
-                .padding(.top, 8)
-
-                // Progress bar
-                HStack(spacing: 8) {
-                    Rectangle()
-                        .fill(Color.blue)
-                        .frame(width: 60, height: 4)
-                        .cornerRadius(2)
-                    ForEach(0..<3, id: \.self) { _ in
-                        Rectangle()
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(width: 60, height: 4)
-                            .cornerRadius(2)
-                    }
-                    Spacer()
-                }
-                .padding(.horizontal, 24)
-            }
-
-            // Main content
+        VStack {
             ScrollView {
-                VStack(spacing: 32) {
-                    VStack(spacing: 16) {
-                        Text("Choose your interests")
-                            .font(.system(size: 28, weight: .bold))
-                            .foregroundColor(.black)
-                            .multilineTextAlignment(.center)
+                VStack(spacing: 16) {
+                    Text("Choose your interests")
+                        .font(.title)
+                        .bold()
 
-                        Text("Select at least 3 to personalize your challenges.")
-                            .font(.system(size: 16))
-                            .foregroundColor(.gray)
-                            .multilineTextAlignment(.center)
-                    }
-                    .padding(.horizontal, 24)
-                    .padding(.top, 32)
+                    Text("Select at least 3 to personalize your challenges.")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
 
-                    LazyVGrid(columns: [
-                        GridItem(.flexible(), spacing: 16),
-                        GridItem(.flexible(), spacing: 16)
-                    ], spacing: 16) {
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
                         ForEach(Array(interests.enumerated()), id: \.element.id) { index, interest in
-                            InterestCard(
-                                interest: interest,
-                                isSelected: interest.isSelected
-                            ) {
+                            Button(action: {
                                 interests[index].isSelected.toggle()
+                            }) {
+                                VStack(spacing: 10) {
+                                    Image(systemName: interest.icon)
+                                        .font(.system(size: 28))
+                                        .foregroundColor(interest.isSelected ? .white : .blue)
+                                        .padding()
+                                        .background(interest.isSelected ? Color.blue : Color.gray.opacity(0.2))
+                                        .clipShape(Circle())
+
+                                    Text(interest.name)
+                                        .font(.subheadline)
+                                        .foregroundColor(.primary)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .fill(Color.white)
+                                        .shadow(color: .gray.opacity(0.2), radius: 4, x: 0, y: 2)
+                                )
                             }
                         }
                     }
-                    .padding(.horizontal, 24)
-
-                    Spacer(minLength: 120)
+                    .padding(.horizontal)
                 }
+                .padding(.top)
             }
 
-            // Continue button
-            VStack {
-                Button(action: {
-                    if canContinue {
-                        onContinue()  // Trigger navigation
-                    }
-                }) {
-                    Text("Continue")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 56)
-                        .background(
-                            canContinue ?
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    Color(red: 0.4, green: 0.7, blue: 1.0),
-                                    Color(red: 0.3, green: 0.6, blue: 0.9)
-                                ]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ) :
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    Color.gray.opacity(0.4),
-                                    Color.gray.opacity(0.4)
-                                ]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .cornerRadius(28)
+            Button(action: {
+                if canContinue {
+                    onContinue()
                 }
-                .disabled(!canContinue)
-                .padding(.horizontal, 24)
-                .padding(.bottom, 40)
+            }) {
+                Text("Continue")
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(canContinue ? Color.blue : Color.gray.opacity(0.4))
+                    .cornerRadius(20)
             }
-            .background(Color.white)
+            .padding()
+            .disabled(!canContinue)
         }
-        .background(Color(red: 0.97, green: 0.97, blue: 0.98))
     }
 }
 
-// Keep these in the same file
-struct Interest: Identifiable {
-    let id = UUID()
-    let name: String
-    let icon: String
-    var isSelected: Bool = false
-}
-
-struct InterestCard: View {
-    let interest: Interest
-    let isSelected: Bool
-    let onTap: () -> Void
-    
-    var body: some View {
-        Button(action: onTap) {
-            VStack(spacing: 16) {
-                ZStack {
-                    Circle()
-                        .fill(isSelected ? Color.blue : Color.gray.opacity(0.2))
-                        .frame(width: 56, height: 56)
-                    Image(systemName: interest.icon)
-                        .font(.system(size: 24, weight: .medium))
-                        .foregroundColor(isSelected ? .white : .black)
-                }
-                Text(interest.name)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.black)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 120)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.white.opacity(0.8))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(isSelected ? Color.blue : Color.gray.opacity(0.2),
-                                    lineWidth: isSelected ? 2 : 1)
-                    )
-            )
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
-}
-
-// Modern preview syntax
 #Preview {
     ChallengelyInterestsView(onContinue: {})
 }

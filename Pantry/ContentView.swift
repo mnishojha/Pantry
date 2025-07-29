@@ -29,9 +29,11 @@ struct ContentView: View {
                 }
                 .padding(.horizontal)
 
-                // Hidden NavigationLink triggered by state change
+                // Navigation trigger
                 NavigationLink(
-                    destination: ChallengeLevelView(),
+                    destination: ChallengeLevelView {
+                        print("Challenge Completed")
+                    },
                     isActive: $navigateToChallengeLevel
                 ) {
                     EmptyView()
@@ -41,6 +43,7 @@ struct ContentView: View {
         }
     }
 }
+
 #Preview {
     ContentView()
 }

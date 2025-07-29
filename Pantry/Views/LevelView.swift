@@ -6,6 +6,136 @@
 //
 import SwiftUI
 
+struct ChallengeLevelView: View {
+    @State private var selectedLevel: ChallengeLevel = .medium
+    let onCompletion: () -> Void  // ✅ closure from MainOnboardingView
+
+    var body: some View {
+        VStack(spacing: 0) {
+            // Header
+            VStack(spacing: 20) {
+                HStack {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(.black)
+                    Spacer()
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 8)
+
+                // Progress bar
+                HStack(spacing: 8) {
+                    Rectangle().fill(Color.blue).frame(width: 60, height: 4).cornerRadius(2)
+                    Rectangle().fill(Color.blue).frame(width: 60, height: 4).cornerRadius(2)
+                    ForEach(0..<2) { _ in
+                        Rectangle().fill(Color.gray.opacity(0.3)).frame(width: 60, height: 4).cornerRadius(2)
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 24)
+            }
+
+            ScrollView {
+                VStack(spacing: 32) {
+                    // Title
+                    VStack(spacing: 16) {
+                        Text("Set Your Challenge Level")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(.black)
+                            .multilineTextAlignment(.center)
+
+                        Text("How tough do you want your challenges to be? You can always change this later.")
+                            .font(.system(size: 16))
+                            .foregroundColor(.gray)
+                            .multilineTextAlignment(.center)
+                            .lineSpacing(2)
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.top, 32)
+
+                    // Level Slider mimic
+                    VStack(spacing: 24) {
+                        ZStack {
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.2))
+                                .frame(height: 4)
+                                .cornerRadius(2)
+
+                            HStack {
+                                if selectedLevel == .easy {
+                                    Circle().fill(Color.blue).frame(width: 20, height: 20)
+                                } else if selectedLevel == .medium {
+                                    Spacer()
+                                    Circle().fill(Color.blue).frame(width: 20, height: 20)
+                                    Spacer()
+                                } else {
+                                    Spacer()
+                                    Spacer()
+                                    Circle().fill(Color.blue).frame(width: 20, height: 20)
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 24)
+
+                        // Labels
+                        HStack {
+                            Text("Easy")
+                                .font(.system(size: 14, weight: selectedLevel == .easy ? .semibold : .regular))
+                                .foregroundColor(selectedLevel == .easy ? .black : .gray)
+                            Spacer()
+                            Text("Medium")
+                                .font(.system(size: 14, weight: selectedLevel == .medium ? .semibold : .regular))
+                                .foregroundColor(selectedLevel == .medium ? .black : .gray)
+                            Spacer()
+                            Text("Hard")
+                                .font(.system(size: 14, weight: selectedLevel == .hard ? .semibold : .regular))
+                                .foregroundColor(selectedLevel == .hard ? .black : .gray)
+                        }
+                        .padding(.horizontal, 24)
+                    }
+
+                    // Level Cards
+                    VStack(spacing: 16) {
+                        ForEach(ChallengeLevel.allCases, id: \.title) { level in
+                            LevelOptionCard(level: level, isSelected: selectedLevel == level) {
+                                selectedLevel = level
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 24)
+
+                    Spacer(minLength: 120)
+                }
+            }
+
+            // Continue Button
+            Button(action: {
+                print("Selected level: \(selectedLevel.title)")
+                onCompletion()  // ✅ triggers navigation to next screen
+            }) {
+                Text("Complete Profile")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 56)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.blue.opacity(0.9), Color.blue]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .cornerRadius(28)
+            }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 40)
+        }
+        .background(Color(red: 0.97, green: 0.97, blue: 0.98))
+        .navigationBarHidden(true)
+    }
+}
+
+// Supporting Views & Models
 enum ChallengeLevel: CaseIterable {
     case easy, medium, hard
 
@@ -41,156 +171,6 @@ enum ChallengeLevel: CaseIterable {
         }
     }
 }
-
-struct ChallengeLevelView: View {
-    @State private var selectedLevel: ChallengeLevel = .medium
-    @State private var navigateToNext = false
-    @Environment(\.presentationMode) var presentationMode
-
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                // Header
-                VStack(spacing: 20) {
-                    HStack {
-                        Button(action: {
-                            presentationMode.wrappedValue.dismiss()
-                        }) {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 18, weight: .medium))
-                                .foregroundColor(.black)
-                        }
-                        Spacer()
-                    }
-                    .padding(.horizontal, 24)
-                    .padding(.top, 8)
-
-                    // Progress bar
-                    HStack(spacing: 8) {
-                        Rectangle().fill(Color.blue).frame(width: 60, height: 4).cornerRadius(2)
-                        Rectangle().fill(Color.blue).frame(width: 60, height: 4).cornerRadius(2)
-                        ForEach(0..<2) { _ in
-                            Rectangle().fill(Color.gray.opacity(0.3)).frame(width: 60, height: 4).cornerRadius(2)
-                        }
-                        Spacer()
-                    }
-                    .padding(.horizontal, 24)
-                }
-
-                ScrollView {
-                    VStack(spacing: 32) {
-                        // Title
-                        VStack(spacing: 16) {
-                            Text("Set Your Challenge Level")
-                                .font(.system(size: 28, weight: .bold))
-                                .foregroundColor(.black)
-                                .multilineTextAlignment(.center)
-
-                            Text("How tough do you want your challenges to be? You can always change this later.")
-                                .font(.system(size: 16))
-                                .foregroundColor(.gray)
-                                .multilineTextAlignment(.center)
-                                .lineSpacing(2)
-                        }
-                        .padding(.horizontal, 24)
-                        .padding(.top, 32)
-
-                        // Level Indicator (Slider mimic)
-                        VStack(spacing: 24) {
-                            ZStack {
-                                Rectangle()
-                                    .fill(Color.gray.opacity(0.2))
-                                    .frame(height: 4)
-                                    .cornerRadius(2)
-
-                                HStack {
-                                    if selectedLevel == .easy {
-                                        Circle().fill(Color.blue).frame(width: 20, height: 20)
-                                            .overlay(Circle().stroke(Color.white, lineWidth: 3))
-                                        Spacer()
-                                    } else if selectedLevel == .medium {
-                                        Spacer()
-                                        Circle().fill(Color.blue).frame(width: 20, height: 20)
-                                            .overlay(Circle().stroke(Color.white, lineWidth: 3))
-                                        Spacer()
-                                    } else {
-                                        Spacer()
-                                        Spacer()
-                                        Circle().fill(Color.blue).frame(width: 20, height: 20)
-                                            .overlay(Circle().stroke(Color.white, lineWidth: 3))
-                                    }
-                                }
-                            }
-                            .padding(.horizontal, 24)
-
-                            // Labels
-                            HStack {
-                                Text("Easy")
-                                    .font(.system(size: 14, weight: selectedLevel == .easy ? .semibold : .regular))
-                                    .foregroundColor(selectedLevel == .easy ? .black : .gray)
-                                Spacer()
-                                Text("Medium")
-                                    .font(.system(size: 14, weight: selectedLevel == .medium ? .semibold : .regular))
-                                    .foregroundColor(selectedLevel == .medium ? .black : .gray)
-                                Spacer()
-                                Text("Hard")
-                                    .font(.system(size: 14, weight: selectedLevel == .hard ? .semibold : .regular))
-                                    .foregroundColor(selectedLevel == .hard ? .black : .gray)
-                            }
-                            .padding(.horizontal, 24)
-                        }
-
-                        // Level cards
-                        VStack(spacing: 16) {
-                            ForEach(ChallengeLevel.allCases, id: \.title) { level in
-                                LevelOptionCard(level: level, isSelected: selectedLevel == level) {
-                                    selectedLevel = level
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 24)
-
-                        Spacer(minLength: 120)
-                    }
-                }
-
-                // Button
-                VStack {
-                    NavigationLink(destination: ChallengeChatAssistantView(), isActive: $navigateToNext) {
-                        EmptyView()
-                    }
-
-                        EmptyView()
-                    }
-
-                    Button(action: {
-                        print("Selected level: \(selectedLevel.title)")
-                        navigateToNext = true
-                    }) {
-                        Text("Complete Profile")
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 56)
-                            .background(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [Color.blue.opacity(0.9), Color.blue]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .cornerRadius(28)
-                    }
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 40)
-                }
-                .background(Color.white)
-            }
-            .background(Color(red: 0.97, green: 0.97, blue: 0.98))
-            .navigationBarHidden(true)
-        }
-    }
-
 
 struct LevelOptionCard: View {
     let level: ChallengeLevel
@@ -241,10 +221,11 @@ struct LevelOptionCard: View {
     }
 }
 
-
-
+// Preview
 struct ChallengeLevelView_Previews: PreviewProvider {
     static var previews: some View {
-        ChallengeLevelView()
+        ChallengeLevelView {
+            // do nothing in preview
+        }
     }
 }

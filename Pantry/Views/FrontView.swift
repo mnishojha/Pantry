@@ -8,53 +8,48 @@
 import SwiftUI
 
 struct ChallengelyWelcomeView: View {
-    let onContinue: () -> Void  // Changed to let for immutability
-    
+    let onContinue: () -> Void
+
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
-                // Top section
                 VStack(spacing: 32) {
                     Spacer()
-                    
-                    // Trophy
+
                     ZStack {
                         Circle()
                             .fill(Color.white)
                             .frame(width: 80, height: 80)
-                            .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
-                        
+                            .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+
                         Image(systemName: "trophy.fill")
                             .font(.system(size: 32))
                             .foregroundColor(.blue)
                     }
-                    
-                    // Title
+
                     VStack(spacing: 8) {
                         Text("Welcome to")
                             .font(.system(size: 32, weight: .bold))
                             .foregroundColor(.black)
-                        
-                        Text("Challengely")
+
+                        Text("Pantry")
                             .font(.system(size: 32, weight: .bold))
                             .foregroundColor(.blue)
                     }
-                    
-                    // Description
+
                     Text("Your daily dose of personalized challenges to help you grow and achieve your goals.")
                         .font(.system(size: 16))
                         .foregroundColor(.gray)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 40)
                         .lineSpacing(4)
-                    
+
                     Spacer()
                 }
                 .frame(maxHeight: .infinity)
-                
-                // Get Started button
+
                 VStack {
-                    Button(action: onContinue) {  // Directly use the closure
+                    Button(action: onContinue) {
                         Text("Get Started")
                             .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(.white)
@@ -62,10 +57,7 @@ struct ChallengelyWelcomeView: View {
                             .frame(height: 56)
                             .background(
                                 LinearGradient(
-                                    gradient: Gradient(colors: [
-                                        Color(red: 0.4, green: 0.7, blue: 1.0),
-                                        Color(red: 0.3, green: 0.6, blue: 0.9)
-                                    ]),
+                                    gradient: Gradient(colors: [Color.blue, Color.purple]),
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )
@@ -82,7 +74,7 @@ struct ChallengelyWelcomeView: View {
     }
 }
 
-// Modern SwiftUI preview syntax
+
 #Preview {
     ChallengelyWelcomeView {
         print("Get Started tapped in preview")
