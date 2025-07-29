@@ -8,14 +8,16 @@
 import SwiftUI
 
 struct ChallengelyWelcomeView: View {
+    let onContinue: () -> Void  // Changed to let for immutability
+    
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
-                // Top section with trophy icon
+                // Top section
                 VStack(spacing: 32) {
                     Spacer()
                     
-                    // Trophy icon in circle
+                    // Trophy
                     ZStack {
                         Circle()
                             .fill(Color.white)
@@ -27,7 +29,7 @@ struct ChallengelyWelcomeView: View {
                             .foregroundColor(.blue)
                     }
                     
-                    // Welcome text
+                    // Title
                     VStack(spacing: 8) {
                         Text("Welcome to")
                             .font(.system(size: 32, weight: .bold))
@@ -38,7 +40,7 @@ struct ChallengelyWelcomeView: View {
                             .foregroundColor(.blue)
                     }
                     
-                    // Description text
+                    // Description
                     Text("Your daily dose of personalized challenges to help you grow and achieve your goals.")
                         .font(.system(size: 16))
                         .foregroundColor(.gray)
@@ -52,10 +54,7 @@ struct ChallengelyWelcomeView: View {
                 
                 // Get Started button
                 VStack {
-                    Button(action: {
-                        // Handle get started action
-                        print("Get Started tapped")
-                    }) {
+                    Button(action: onContinue) {  // Directly use the closure
                         Text("Get Started")
                             .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(.white)
@@ -83,10 +82,9 @@ struct ChallengelyWelcomeView: View {
     }
 }
 
-// Preview
-struct ChallengelyWelcomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        ChallengelyWelcomeView()
+// Modern SwiftUI preview syntax
+#Preview {
+    ChallengelyWelcomeView {
+        print("Get Started tapped in preview")
     }
 }
-

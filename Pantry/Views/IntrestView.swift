@@ -7,13 +7,6 @@
 
 import SwiftUI
 
-struct Interest {
-    let id = UUID()
-    let name: String
-    let icon: String
-    var isSelected: Bool = false
-}
-
 struct ChallengelyInterestsView: View {
     @State private var interests = [
         Interest(name: "Fitness", icon: "dumbbell.fill", isSelected: true),
@@ -23,7 +16,7 @@ struct ChallengelyInterestsView: View {
         Interest(name: "Social", icon: "person.2.fill", isSelected: false)
     ]
     
-    @Environment(\.presentationMode) var presentationMode
+    let onContinue: () -> Void  // Navigation closure
     
     var selectedCount: Int {
         interests.filter { $0.isSelected }.count
@@ -35,53 +28,47 @@ struct ChallengelyInterestsView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header with back button and progress bar
+            // Header
             VStack(spacing: 20) {
                 HStack {
                     Button(action: {
-                        presentationMode.wrappedValue.dismiss()
+                        // Handle back action if needed
                     }) {
                         Image(systemName: "arrow.left")
                             .font(.system(size: 20, weight: .medium))
                             .foregroundColor(.black)
                     }
-                    
                     Spacer()
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 8)
-                
+
                 // Progress bar
                 HStack(spacing: 8) {
-                    // Active segment
                     Rectangle()
                         .fill(Color.blue)
                         .frame(width: 60, height: 4)
                         .cornerRadius(2)
-                    
-                    // Inactive segments
                     ForEach(0..<3, id: \.self) { _ in
                         Rectangle()
                             .fill(Color.gray.opacity(0.3))
                             .frame(width: 60, height: 4)
                             .cornerRadius(2)
                     }
-                    
                     Spacer()
                 }
                 .padding(.horizontal, 24)
             }
-            
+
             // Main content
             ScrollView {
                 VStack(spacing: 32) {
-                    // Title and description
                     VStack(spacing: 16) {
                         Text("Choose your interests")
                             .font(.system(size: 28, weight: .bold))
                             .foregroundColor(.black)
                             .multilineTextAlignment(.center)
-                        
+
                         Text("Select at least 3 to personalize your challenges.")
                             .font(.system(size: 16))
                             .foregroundColor(.gray)
@@ -89,8 +76,7 @@ struct ChallengelyInterestsView: View {
                     }
                     .padding(.horizontal, 24)
                     .padding(.top, 32)
-                    
-                    // Interest grid
+
                     LazyVGrid(columns: [
                         GridItem(.flexible(), spacing: 16),
                         GridItem(.flexible(), spacing: 16)
@@ -105,16 +91,17 @@ struct ChallengelyInterestsView: View {
                         }
                     }
                     .padding(.horizontal, 24)
-                    
+
                     Spacer(minLength: 120)
                 }
             }
-            
+
             // Continue button
             VStack {
                 Button(action: {
-                    // Handle continue action
-                    print("Continue tapped with \(selectedCount) interests selected")
+                    if canContinue {
+                        onContinue()  // Trigger navigation
+                    }
                 }) {
                     Text("Continue")
                         .font(.system(size: 18, weight: .semibold))
@@ -149,8 +136,15 @@ struct ChallengelyInterestsView: View {
             .background(Color.white)
         }
         .background(Color(red: 0.97, green: 0.97, blue: 0.98))
-        .navigationBarHidden(true)
     }
+}
+
+// Keep these in the same file
+struct Interest: Identifiable {
+    let id = UUID()
+    let name: String
+    let icon: String
+    var isSelected: Bool = false
 }
 
 struct InterestCard: View {
@@ -161,18 +155,14 @@ struct InterestCard: View {
     var body: some View {
         Button(action: onTap) {
             VStack(spacing: 16) {
-                // Icon circle
                 ZStack {
                     Circle()
                         .fill(isSelected ? Color.blue : Color.gray.opacity(0.2))
                         .frame(width: 56, height: 56)
-                    
                     Image(systemName: interest.icon)
                         .font(.system(size: 24, weight: .medium))
                         .foregroundColor(isSelected ? .white : .black)
                 }
-                
-                // Interest name
                 Text(interest.name)
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.black)
@@ -184,10 +174,8 @@ struct InterestCard: View {
                     .fill(Color.white.opacity(0.8))
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
-                            .stroke(
-                                isSelected ? Color.blue : Color.gray.opacity(0.2),
-                                lineWidth: isSelected ? 2 : 1
-                            )
+                            .stroke(isSelected ? Color.blue : Color.gray.opacity(0.2),
+                                    lineWidth: isSelected ? 2 : 1)
                     )
             )
         }
@@ -195,11 +183,7 @@ struct InterestCard: View {
     }
 }
 
-// Preview
-struct ChallengelyInterestsView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView {
-            ChallengelyInterestsView()
-        }
-    }
+// Modern preview syntax
+#Preview {
+    ChallengelyInterestsView(onContinue: {})
 }

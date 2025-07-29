@@ -8,17 +8,39 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var navigateToChallengeLevel = false
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationView {
+            VStack(spacing: 20) {
+                Text("Welcome to the App")
+                    .font(.largeTitle)
+                    .padding()
+
+                Button(action: {
+                    navigateToChallengeLevel = true
+                }) {
+                    Text("Go to Challenge Level")
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue)
+                        .cornerRadius(12)
+                }
+                .padding(.horizontal)
+
+                // Hidden NavigationLink triggered by state change
+                NavigationLink(
+                    destination: ChallengeLevelView(),
+                    isActive: $navigateToChallengeLevel
+                ) {
+                    EmptyView()
+                }
+            }
+            .navigationBarTitle("Home", displayMode: .inline)
         }
-        .padding()
     }
 }
-
 #Preview {
     ContentView()
 }

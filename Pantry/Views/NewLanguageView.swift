@@ -7,15 +7,16 @@
 import SwiftUI
 
 struct DailyChallengeView: View {
-    @Environment(\.presentationMode) var presentationMode
     @State private var selectedTab = 0
+    let onAcceptChallenge: () -> Void  // Navigation closure for accepting challenge
+    let onChatTap: () -> Void          // Navigation closure for chat
     
     var body: some View {
         VStack(spacing: 0) {
             // Header
             HStack {
                 Button(action: {
-                    presentationMode.wrappedValue.dismiss()
+                    // Handle back action at higher level if needed
                 }) {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 18, weight: .medium))
@@ -30,7 +31,6 @@ struct DailyChallengeView: View {
                 
                 Spacer()
                 
-                // Invisible spacer to center the title
                 Image(systemName: "chevron.left")
                     .font(.system(size: 18, weight: .medium))
                     .opacity(0)
@@ -39,19 +39,15 @@ struct DailyChallengeView: View {
             .padding(.top, 8)
             .padding(.bottom, 20)
             
-            // Main content
             ScrollView {
                 VStack(spacing: 0) {
-                    // Challenge content
                     VStack(spacing: 24) {
-                        // Title
                         Text("Learn a New Language")
                             .font(.system(size: 32, weight: .bold))
                             .foregroundColor(.black)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 24)
                         
-                        // Description
                         Text("Start your language learning journey today! Choose a language that excites you and dive into a beginner's lesson to learn basic greetings and common phrases.")
                             .font(.system(size: 16))
                             .foregroundColor(.gray)
@@ -59,29 +55,22 @@ struct DailyChallengeView: View {
                             .lineSpacing(4)
                             .padding(.horizontal, 24)
                         
-                        // Challenge details card
                         VStack(spacing: 20) {
-                            // Estimated Time
                             HStack {
                                 Text("Estimated Time")
                                     .font(.system(size: 16))
                                     .foregroundColor(.gray)
-                                
                                 Spacer()
-                                
                                 Text("30 minutes")
                                     .font(.system(size: 16, weight: .semibold))
                                     .foregroundColor(.black)
                             }
                             
-                            // Difficulty
                             HStack {
                                 Text("Difficulty")
                                     .font(.system(size: 16))
                                     .foregroundColor(.gray)
-                                
                                 Spacer()
-                                
                                 Text("Easy")
                                     .font(.system(size: 14, weight: .medium))
                                     .foregroundColor(.green)
@@ -107,12 +96,8 @@ struct DailyChallengeView: View {
                 }
             }
             
-            // Accept Challenge Button
             VStack(spacing: 20) {
-                Button(action: {
-                    // Handle accept challenge action
-                    print("Accept Challenge tapped")
-                }) {
+                Button(action: onAcceptChallenge) {
                     Text("Accept Challenge")
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(.white)
@@ -132,9 +117,7 @@ struct DailyChallengeView: View {
                 }
                 .padding(.horizontal, 24)
                 
-                // Bottom tab bar
                 HStack(spacing: 0) {
-                    // Home tab
                     TabBarItem(
                         icon: "house.fill",
                         title: "Home",
@@ -144,19 +127,17 @@ struct DailyChallengeView: View {
                     }
                     
                     Spacer()
-                    
-                    // Chat tab
                     TabBarItem(
                         icon: "message.fill",
                         title: "Chat",
                         isSelected: selectedTab == 1
                     ) {
                         selectedTab = 1
+                        onChatTap()
                     }
                     
                     Spacer()
                     
-                    // Profile tab
                     TabBarItem(
                         icon: "person.fill",
                         title: "Profile",
@@ -171,7 +152,6 @@ struct DailyChallengeView: View {
             }
         }
         .background(Color(red: 0.97, green: 0.97, blue: 0.98))
-        .navigationBarHidden(true)
     }
 }
 
@@ -197,11 +177,10 @@ struct TabBarItem: View {
     }
 }
 
-// Preview
-struct DailyChallengeView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView {
-            DailyChallengeView()
-        }
-    }
+// Modern preview syntax
+#Preview {
+    DailyChallengeView(
+        onAcceptChallenge: {},
+        onChatTap: {}
+    )
 }
